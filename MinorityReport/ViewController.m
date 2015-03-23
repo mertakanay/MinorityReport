@@ -9,6 +9,9 @@
 #import "ViewController.h"
 
 @interface ViewController ()
+@property (weak, nonatomic) IBOutlet UILabel *theFutureLabel;
+@property (weak, nonatomic) IBOutlet UILabel *thePrecogLabel;
+@property CGPoint originalFutureLabelCenter;
 
 @end
 
@@ -16,12 +19,37 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
+
+    self.originalFutureLabelCenter = self.theFutureLabel.center;
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (IBAction)doDrag:(UIPanGestureRecognizer *)sender
+{
+    if (sender.state == UIGestureRecognizerStateEnded) {
+        [UIView animateWithDuration:5 animations:^{
+            self.theFutureLabel.center = self.originalFutureLabelCenter;
+            self.theFutureLabel.alpha = 0;
+        }completion:^(BOOL finished) {
+            //bu bölüm ve altındaki kod animasyon tamamlandıktan sonra ne gerçekleştiğini anlatıyor. Bu kodda 5 saniye sonra yazı geri geliyor.
+            [UIView animateWithDuration:5 animations:^{
+                self.theFutureLabel.alpha = 1;
+            }];
+
+        }];
+
+    }else{
+        CGPoint point = [sender locationInView:self.view];
+        self.theFutureLabel.center = point;
+
+        if (CGRectContainsPoint(self.thePrecogLabel.frame, point))
+        {
+            self.theFutureLabel.text = @"It changed to Yay!";
+            self.theFutureLabel.backgroundColor = [UIColor blackColor];
+            self.theFutureLabel.textColor = [UIColor whiteColor];
+            [self.theFutureLabel sizeToFit];
+        }
+    }
 }
+
 
 @end
